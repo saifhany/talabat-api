@@ -13,7 +13,7 @@ import {ROLES_KEY} from "./roles-auth.decorator";
 
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class ProviderGuard implements CanActivate {
     constructor(private jwtService: JwtService,
                 private reflector: Reflector) {
     }
@@ -47,7 +47,7 @@ export class RolesGuard implements CanActivate {
                 return true;
             }
          
-            else if (user.role.includes('admin') && requiredRoles.includes('admin')) {
+            else if ( (user.role === 'provider') && requiredRoles.includes('provider') ) {
                 return true;
             }
             return false;

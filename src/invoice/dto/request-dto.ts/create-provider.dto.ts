@@ -10,6 +10,11 @@ export enum Size {
 }
 
 export class ProductDto {
+
+  @IsNotEmpty()
+  @IsString()
+  _id :string;
+
   @IsNotEmpty()
   @IsString()
   name: string;

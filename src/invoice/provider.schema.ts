@@ -10,6 +10,7 @@ export const ProviderSchema = new mongoose.Schema({
     name: String,
     rating: Number,
     products: [{
+        id: String,
         name: String,
         price: Number,
         description: String,

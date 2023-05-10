@@ -14,7 +14,7 @@ export class providerService {
   }
 
   async getmyshop( userId:string): Promise<_provider[]> {
-    const provider = await this.providerModel.find({ owner:userId});
+    const provider = await this.providerModel.find({ owner:userId}).populate('owner',' -phone -password -otp').populate('categories','name')
     if (!provider) {
       throw new NotFoundException(`provider with ID ${userId} not found`);
     }
@@ -23,7 +23,6 @@ export class providerService {
 
   async addProducts(products: any,providerId:string,userId:string): Promise<any> {
     for   (const product of products.products) {
-      console.log(product , 'gg');
       const provider = await this.providerModel.findOne({ owner:userId,_id:providerId});
       if (!provider) {
         throw new NotFoundException(`provider with ID ${providerId} not found`);
@@ -33,6 +32,38 @@ export class providerService {
     }
     return products;
   }
+
+  async deleteProduct(productId: string,providerId:string,userId:string): Promise<any> { 
+    const provider = await this.providerModel.findOne({ owner:userId,_id:providerId});
+    if (!provider) {
+      throw new NotFoundException(`provider with ID ${providerId} not found`);
+    }
+    provider.products = provider.products.filter((product) => product._id != productId);
+    await provider.save();
+    return provider;
+  }
+  
+  async updateProduct(productId: string,providerId:string,userId:string,product:ProductDto): Promise<any> {
+
+    const provider = await this.providerModel.findOne({ owner:userId,_id:providerId});
+    if (!provider) {
+      throw new NotFoundException(`provider with ID ${providerId} not found`);
+    }
+    const updated = provider.products.find((product) => product._id == productId);
+    if (!updated) {
+      throw new NotFoundException(`product with ID ${productId} not found`);
+    }
+    updated.name = product.name;
+    updated.description = product.description;
+    updated.price = product.price;
+    updated.quantity = product.quantity;
+    updated.size = product.size;
+    updated.subCategory = product.subCategory;
+    await provider.save();
+    return updated;
+
+  }
+
 
 
 
